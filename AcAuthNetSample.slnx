@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AcAuthNetSample.Core/AcAuthNetSample.Core.csproj" Id="dae92451-e16f-400d-b3bf-d4f425b509ed" />
+  <Project Path="AcAuthNetSample.Packages/AcAuthNetSample.Packages.csproj" />
+  <Project Path="AuthNet.Shard/AuthNet.Shard.csproj" />
+  <Project Path="RbacNetSample.Web/RbacNetSample.Web.csproj" />
+</Solution>
