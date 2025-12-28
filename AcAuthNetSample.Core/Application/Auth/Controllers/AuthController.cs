@@ -1,5 +1,6 @@
 ﻿using AcAuthNetSample.Core.Application.Auth.Dtos;
 using AcAuthNetSample.Core.Application.Auth.Interfaces;
+using AcAuthNetSample.Core.Comments;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,13 +21,12 @@ namespace AcAuthNetSample.Core.Application.Auth.Controllers {
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest loginRequest) {
 
-
             var userAgent = Request.Headers["User-Agent"].ToString();
             var client = Request.Headers["Client"].FirstOrDefault() ?? "Web";
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
 
             var login = await _authService.LoginAsync(loginRequest.UserName!, loginRequest.Password!, userAgent, client, ip);
-            return new JsonResult(login);
+            return JsonResultHelper.Success(login);
         }
 
         [HttpPost("register")]

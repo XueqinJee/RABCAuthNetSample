@@ -3,10 +3,11 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import Layout from '../components/Layout.vue'
 import DashboardView from '../views/main/DashboardView.vue'
-import UserView from '../views/main/settings/UserView.vue'
+import UserView from '../views/main/settings/User/index.vue'
 import RoleView from '../views/main/settings/RoleView.vue'
 import PermissionView from '../views/main/settings/PermissionView.vue'
 import SettingsView from '../views/main/settings/SettingsView.vue'
+import MenuView from '../views/main/settings/Menu/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,6 +60,12 @@ const router = createRouter({
           name: 'settings',
           component: SettingsView,
           meta: { menu: 'settings' }
+        },
+        {
+          path: 'menu',
+          name: 'menu',
+          component: MenuView,
+          meta: { menu: 'menu' }
         }
       ]
     }

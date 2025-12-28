@@ -14,6 +14,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Application\Sms\Controllers\" />
+		<Folder Include="Application\Sms\Dtos\" />
 		<Folder Include="Infrastructure\Data\Configurations\" />
 	</ItemGroup>
 

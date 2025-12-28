@@ -4,6 +4,7 @@ using AcAuthNetSample.Core.Application.Configuration.Options;
 using AcAuthNetSample.Core.Domain.Auth.Entities;
 using AcAuthNetSample.Core.Infrastructure.Repositories.Auth.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,24 +19,27 @@ using System.Text;
 namespace AcAuthNetSample.Core.Application.Auth.Services {
     public class AuthTokenService : IAuthTokenService {
 
-        private readonly IMemoryCache _memoryCache;
+        private readonly IDistributedCache _distributeCache;
         private readonly IAccessTokenRepository _accessTokenRepository;
         private readonly IUserRepository _userRepository;
 
         private readonly ILogger<AuthService> _logger;
         private readonly JwtBearerOptions _jwtBearerOptions;
         private readonly JwtConfigOptions _jwtConfigOptions;
-        public AuthTokenService(IMemoryCache memoryCache, ILogger<AuthService> logger,
+        public AuthTokenService(
+            ILogger<AuthService> logger,
             IOptionsSnapshot<JwtBearerOptions> jwtBearerOptions,
             IOptionsSnapshot<JwtConfigOptions> jwtConfigOptions,
-            IAccessTokenRepository accessTokenRepository, IUserRepository userRepository)
+            IAccessTokenRepository accessTokenRepository,
+            IUserRepository userRepository,
+            IDistributedCache distributeCache)
         {
-            _memoryCache = memoryCache;
             _logger = logger;
             _jwtBearerOptions = jwtBearerOptions.Get(JwtBearerDefaults.AuthenticationScheme);
             _jwtConfigOptions = jwtConfigOptions.Value;
             _accessTokenRepository = accessTokenRepository;
             _userRepository = userRepository;
+            _distributeCache = distributeCache;
         }
 
         public async Task<LoginUserResponse> CreateUserToken(string userName, string userAgent, string client, string ip)
@@ -103,7 +107,7 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
 
             // 验证Token是否一致
             var refreshTokenId = principal.Identities.First().Claims.Where(x => x.Type == ClaimTypes.NameIdentifier).First().Value;
-            var refreshToken = _memoryCache.Get<string>(refreshTokenId);
+            var refreshToken = await _distributeCache.GetStringAsync(refreshTokenId);
 
             if(refreshToken != loginUserResponse.RefreshToken)
             {
@@ -120,7 +124,7 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
         }
 
 
-        private Task<(string, string)> CreateRefreshToken(string userName)
+        private async Task<(string, string)> CreateRefreshToken(string userName)
         {
             var tokenKey = GetTokenKey(userName);
 
@@ -131,8 +135,8 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
             }
 
             var refreshToken = Convert.ToBase64String(rsb);
-            _memoryCache.Set(tokenKey, refreshToken);
-            return Task.FromResult((tokenKey, refreshToken));
+            await _distributeCache.SetAsync(tokenKey, Encoding.UTF8.GetBytes(refreshToken));
+            return (tokenKey, refreshToken);
         }
 
 

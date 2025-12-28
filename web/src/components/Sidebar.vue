@@ -42,6 +42,10 @@
           <el-icon><Setting /></el-icon>
           <template #title>系统设置</template>
         </el-menu-item>
+        <el-menu-item index="menu">
+          <el-icon><Menu /></el-icon>
+          <template #title>菜单管理</template>
+        </el-menu-item>
       </el-sub-menu>
     </el-menu>
   </div>
@@ -50,7 +54,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { HomeFilled, User, Lock, Key, Setting } from '@element-plus/icons-vue'
+import { HomeFilled, User, Lock, Key, Setting, Menu } from '@element-plus/icons-vue'
 
 const props = defineProps({
   isCollapse: {

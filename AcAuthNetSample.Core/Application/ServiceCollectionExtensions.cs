@@ -1,4 +1,5 @@
 ﻿using AcAuthNetSample.Core.Application.Auth;
+using AcAuthNetSample.Core.Application.Sms;
 using AcAuthNetSample.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,9 @@ namespace AcAuthNetSample.Core.Application {
 
             // 注册Auth相关服务
             service.AddAuth(configuration);
+            // 邮箱、短信相关服务
+            service.AddSmsService(configuration);
+
             return service;
         }
 

@@ -21,7 +21,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { HomeFilled, User, Lock, Key, Setting } from '@element-plus/icons-vue'
+import { HomeFilled, User, Lock, Key, Setting, Menu } from '@element-plus/icons-vue'
 import Sidebar from './Sidebar.vue'
 import Header from './Header.vue'
 import Tabs from './Tabs.vue'
@@ -36,7 +36,8 @@ const menuMap = {
   user: { title: '用户管理', icon: User, closable: true, showTitle: true, componentName: 'UserView' },
   role: { title: '角色管理', icon: Lock, closable: true, showTitle: true, componentName: 'RoleView' },
   permission: { title: '权限管理', icon: Key, closable: true, showTitle: true, componentName: 'PermissionView' },
-  settings: { title: '系统设置', icon: Setting, closable: true, showTitle: true, componentName: 'SettingsView' }
+  settings: { title: '系统设置', icon: Setting, closable: true, showTitle: true, componentName: 'SettingsView' },
+  menu: { title: '菜单管理', icon: Menu, closable: true, showTitle: true, componentName: 'MenuView' }
 }
 
 const tabs = ref([
@@ -109,8 +110,9 @@ const handleTabRemove = (tabName) => {
 
 .content-area {
   flex: 1;
-  padding: 24px;
-  overflow-y: auto;
+  height: 100%;
+  padding: 5px;
+  overflow-y: hidden;
   background: #f5f5f5;
 }
 </style>
