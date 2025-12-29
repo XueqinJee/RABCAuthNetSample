@@ -103,7 +103,7 @@ namespace AcAuthNetSample.Core.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("access_token");
+                    b.ToTable("access_token", (string)null);
                 });
 
             modelBuilder.Entity("AcAuthNetSample.Core.Domain.Auth.Entities.User", b =>
@@ -180,7 +180,7 @@ namespace AcAuthNetSample.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("user");
+                    b.ToTable("user", (string)null);
                 });
 
             modelBuilder.Entity("AcAuthNetSample.Core.Domain.Auth.Entities.TokenAccess", b =>

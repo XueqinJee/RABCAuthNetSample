@@ -39,6 +39,9 @@ namespace AcAuthNetSample.Core.Infrastructure.Data {
 
         public DbSet<User> Users { get; set; }
         public DbSet<TokenAccess> AccessTokens { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<RoleMenu> RoleMenus { get; set; }
 
     }
 }

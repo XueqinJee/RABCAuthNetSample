@@ -1,5 +1,6 @@
 ﻿using AcAuthNetSample.Core.Application.Auth.Dtos;
 using AcAuthNetSample.Core.Application.Auth.Interfaces;
+using AcAuthNetSample.Core.Comments.Exceptions;
 using AcAuthNetSample.Core.Domain.Auth.Entities;
 using AcAuthNetSample.Core.Domain.Auth.Interfaces;
 using AcAuthNetSample.Core.Infrastructure.Repositories.Auth.Interfaces;
@@ -97,15 +98,13 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
                 if(loginToken.FailCount > 5 && loginToken.ExpireTime > currentUtcTime)
                 {
                     var unlockTime = TimeZoneInfo.ConvertTimeFromUtc(loginToken.ExpireTime, _chinaTimeZone);
-                    throw new ArgumentException($"账户已被锁定，请在 {unlockTime.ToString("yyyy-MM-ddTHH:mm:ss")} 后再次尝试！");
+                    throw new AccountLockedException($"账户已被锁定，请在 {unlockTime.ToString("yyyy-MM-ddTHH:mm:ss")} 后再次尝试！");
                 }
 
                 if (string.IsNullOrEmpty(user.Password) || string.IsNullOrEmpty(user.Salt)) { 
                     hasBusinessException = true;
-                    throw new Exception("用户密码信息异常，请联系管理员！");
+                    throw new AuthException("用户密码信息异常，请联系管理员！");
                 }
-
-
 
                 var validPwd = _passwordHasher.VerifyPassword(password, user.Password!, user.Salt!);
                 if (!validPwd)
@@ -117,7 +116,7 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
                     }
 
                     hasBusinessException = true;
-                    throw new ArgumentException("账号或密码错误！");
+                    throw new AuthenticationFailedException("账号或密码错误！");
                 }
                 loginToken.FailCount = 0;
                 loginToken.ExpireTime = currentUtcTime;
