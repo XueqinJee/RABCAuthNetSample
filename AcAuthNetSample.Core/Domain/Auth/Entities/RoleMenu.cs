@@ -16,24 +16,23 @@ namespace AcAuthNetSample.Core.Domain.Auth.Entities {
         /// <summary>
         /// 角色ID
         /// </summary>
-        [Column("role_id", TypeName = "bigint", Order = 1)]
+        [Column("role_id", Order = 1)]
         [Comment("角色ID")]
         [Required(ErrorMessage = "角色ID不能为空")]
+        [ForeignKey(nameof(Role))]
         public int RoleId { get; set; }
 
         /// <summary>
         /// 菜单ID
         /// </summary>
-        [Column("menu_id", TypeName = "bigint", Order = 2)]
+        [Column("menu_id", Order = 2)]
         [Comment("菜单ID")]
         [Required(ErrorMessage = "菜单ID不能为空")]
+        [ForeignKey(nameof(Menu))]
         public int MenuId { get; set; }
 
-        // 导航属性（EF Core 多对多关联）
-        [ForeignKey("RoleId")]
         public Role? Role { get; set; }
 
-        [ForeignKey("MenuId")]
         public Menu? Menu { get; set; }
     }
 }
