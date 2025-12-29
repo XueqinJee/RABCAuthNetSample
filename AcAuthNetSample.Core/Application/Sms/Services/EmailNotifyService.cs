@@ -1,14 +1,11 @@
 ﻿using AcAuthNetSample.Core.Application.Configuration.Options;
 using AcAuthNetSample.Core.Application.Sms.Interfaces;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
+using MimeKit;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace AcAuthNetSample.Core.Application.Sms.Services {
     public class EmailNotifyService : IEmailNotifyService {
@@ -32,11 +29,14 @@ namespace AcAuthNetSample.Core.Application.Sms.Services {
             try
             {
                 var code = GenerateNumericCode();
-                using var mailMessage = new MailMessage
+
+                var message = new MimeMessage();
+                message.From.Add(new MailboxAddress(config.SenderName, config.SmtpUser));
+                message.To.Add(new MailboxAddress("" ,email));
+                message.Subject = $"【{config.SenderName}】验证码通知";
+                message.Body = new TextPart("html")
                 {
-                    From = new MailAddress(config.SmtpUser, config.SenderName),
-                    Subject = $"【{config.SenderName}】验证码通知",
-                    Body = $@"
+                    Text = $@"
                         <!DOCTYPE html>
                         <html>
                         <head><meta charset='UTF-8'></head>
@@ -49,30 +49,14 @@ namespace AcAuthNetSample.Core.Application.Sms.Services {
                                 <p>如非本人操作，请忽略此邮件。</p>
                             </div>
                         </body>
-                        </html>",
-                    IsBodyHtml = true,
-                    SubjectEncoding = Encoding.UTF8,
+                        </html>"
                 };
-                mailMessage.To.Add(new MailAddress(email));
-
-                // 客户端配置
-                using var smtpClient = new SmtpClient(config.SmtpServer)
-                {
-                    Port = config.SmtpPort,
-                    EnableSsl = true,
-                    Credentials = new NetworkCredential(
-                        config.SmtpUser,
-                        config.SmtpPassword),
-                    Timeout = 5000
-                };
-                // 发送邮件
-                await smtpClient.SendMailAsync(mailMessage);
+                using var client = new SmtpClient();
+                client.Connect(config.SmtpServer, config.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+                client.Authenticate(config.SmtpUser, config.SmtpPassword);
+                await client.SendAsync(message);
+                client.Disconnect(true);
                 return true;
-            }
-            catch (SmtpException ex)
-            {
-                _logger.LogError($"SMTP发送失败：{ex.StatusCode} - {ex.Message}");
-                return false;
             }
             catch (Exception ex) {
                 _logger.LogError($"发送验证码邮件失败：{ex.Message}");
