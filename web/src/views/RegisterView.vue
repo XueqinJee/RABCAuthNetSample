@@ -4,9 +4,15 @@
       <div class="logo-container">
         <div class="logo-icon">
           <svg viewBox="0 0 1024 1024" width="120" height="120">
-            <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z" fill="#667eea"></path>
-            <path d="M512 140c-205.4 0-372 166.6-372 372s166.6 372 372 372 372-166.6 372-372-166.6-372-372-372zm0 680c-170.1 0-308-137.9-308-308s137.9-308 308-308 308 137.9 308 308-137.9 308-308 308z" fill="#764ba2"></path>
-            <path d="M512 280c-132.5 0-240 107.5-240 240s107.5 240 240 240 240-107.5 240-240-107.5-240-240-240zm0 416c-97 0-176-79-176-176s79-176 176-176 176 79 176 176-79 176-176 176z" fill="#667eea"></path>
+            <path
+              d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+              fill="#667eea"></path>
+            <path
+              d="M512 140c-205.4 0-372 166.6-372 372s166.6 372 372 372 372-166.6 372-372-166.6-372-372-372zm0 680c-170.1 0-308-137.9-308-308s137.9-308 308-308 308 137.9 308 308-137.9 308-308 308z"
+              fill="#764ba2"></path>
+            <path
+              d="M512 280c-132.5 0-240 107.5-240 240s107.5 240 240 240 240-107.5 240-240-107.5-240-240-240zm0 416c-97 0-176-79-176-176s79-176 176-176 176 79 176 176-79 176-176 176z"
+              fill="#667eea"></path>
           </svg>
         </div>
         <h1 class="logo-title">加入我们</h1>
@@ -21,7 +27,8 @@
             <el-input v-model="registerForm.username" placeholder="用户名" :prefix-icon="User" size="large"></el-input>
           </el-form-item>
           <el-form-item prop="nickname">
-            <el-input v-model="registerForm.nickname" placeholder="昵称" :prefix-icon="UserFilled" size="large"></el-input>
+            <el-input v-model="registerForm.nickname" placeholder="昵称" :prefix-icon="UserFilled"
+              size="large"></el-input>
           </el-form-item>
           <el-form-item prop="email">
             <el-input v-model="registerForm.email" placeholder="邮箱" :prefix-icon="Message" size="large"></el-input>
@@ -35,10 +42,12 @@
             </div>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="registerForm.password" type="password" placeholder="密码" :prefix-icon="Lock" size="large" show-password></el-input>
+            <el-input v-model="registerForm.password" type="password" placeholder="密码" :prefix-icon="Lock" size="large"
+              show-password></el-input>
           </el-form-item>
           <el-form-item prop="confirmPassword">
-            <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码" :prefix-icon="Lock" size="large" show-password></el-input>
+            <el-input v-model="registerForm.confirmPassword" type="password" placeholder="确认密码" :prefix-icon="Lock"
+              size="large" show-password></el-input>
           </el-form-item>
           <el-form-item class="small-margin">
             <el-button type="primary" size="large" @click="handleRegister" class="register-button">注册</el-button>
@@ -59,6 +68,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { User, UserFilled, Message, Key, Lock } from '@element-plus/icons-vue'
+import { userApi } from '@/api'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
@@ -67,7 +78,7 @@ const registerFormRef = ref(null)
 const registerForm = reactive({
   username: '',
   nickname: '',
-  email: '',
+  email: '2107885241@qq.com',
   code: '',
   password: '',
   confirmPassword: ''
@@ -125,26 +136,37 @@ const rules = {
   ]
 }
 
-const sendCode = () => {
+const sendCode = async () => {
   if (!registerForm.email) {
     registerFormRef.value.validateField('email')
     return
   }
-  
+
   codeDisabled.value = true
   countdown.value = 60
   codeButtonText.value = `${countdown.value}秒后重试`
-  
-  const timer = setInterval(() => {
-    countdown.value--
-    if (countdown.value <= 0) {
-      clearInterval(timer)
+
+  try {
+    let result = await userApi.sendCode(registerForm.email)
+    if(!result.data){
       codeDisabled.value = false
       codeButtonText.value = '获取验证码'
-    } else {
-      codeButtonText.value = `${countdown.value}秒后重试`
+      return ElMessage.warning('邮箱发送失败')
     }
-  }, 1000)
+    const timer = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        clearInterval(timer)
+        codeDisabled.value = false
+        codeButtonText.value = '获取验证码'
+      } else {
+        codeButtonText.value = `${countdown.value}秒后重试`
+      }
+    }, 1000)
+  } catch (ex) {
+      codeDisabled.value = false
+      codeButtonText.value = '获取验证码'
+  }
 }
 
 const handleRegister = () => {
@@ -187,9 +209,12 @@ const goToLogin = () => {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }

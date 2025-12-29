@@ -6,6 +6,10 @@ const userApi = {
     },
     async register(data) {
         return await service.post('/auth/register', data)
+    },
+
+    async sendCode(email){
+        return await service.post('/sms/sendcode', { email: email})
     }
 }
 
