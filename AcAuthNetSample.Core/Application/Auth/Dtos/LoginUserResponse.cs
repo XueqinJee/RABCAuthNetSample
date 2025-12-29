@@ -8,5 +8,7 @@ namespace AcAuthNetSample.Core.Application.Auth.Dtos {
         public string? RefreshToken { get; set; }
         public DateTime ExpireTime { get; set; }
         public string? userName { get; set; }
+        public string? NickName { get; set; }
+        public string? Avatar { get; set; }
     }
 }

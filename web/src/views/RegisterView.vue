@@ -69,7 +69,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { User, UserFilled, Message, Key, Lock } from '@element-plus/icons-vue'
 import { userApi } from '@/api'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 
@@ -78,7 +78,7 @@ const registerFormRef = ref(null)
 const registerForm = reactive({
   username: '',
   nickname: '',
-  email: '2107885241@qq.com',
+  email: '',
   code: '',
   password: '',
   confirmPassword: ''
@@ -148,31 +148,49 @@ const sendCode = async () => {
 
   try {
     let result = await userApi.sendCode(registerForm.email)
-    if(!result.data){
+    if (result.isOk == false) {
       codeDisabled.value = false
       codeButtonText.value = '获取验证码'
-      return ElMessage.warning('邮箱发送失败')
+      ElMessage.warning('邮箱发送失败')
     }
-    const timer = setInterval(() => {
-      countdown.value--
-      if (countdown.value <= 0) {
-        clearInterval(timer)
-        codeDisabled.value = false
-        codeButtonText.value = '获取验证码'
-      } else {
-        codeButtonText.value = `${countdown.value}秒后重试`
-      }
-    }, 1000)
   } catch (ex) {
+
+  }
+
+  const timer = setInterval(() => {
+    countdown.value--
+    if (countdown.value <= 0) {
+      clearInterval(timer)
       codeDisabled.value = false
       codeButtonText.value = '获取验证码'
-  }
+    } else {
+      codeButtonText.value = `${countdown.value}秒后重试`
+    }
+  }, 1000)
 }
 
 const handleRegister = () => {
-  registerFormRef.value.validate((valid) => {
+  registerFormRef.value.validate(async (valid) => {
     if (valid) {
-      console.log('注册信息:', registerForm)
+      
+      await userApi.register(registerForm)
+      
+      ElMessageBox.confirm('注册成功，是否要前往登录？', 'Success', {
+        type: 'success',
+        confirmButtonText: '登录',
+        cancelButtonText: '取消'
+      })
+      .then(() => {
+        router.go('/main')
+      })
+      .catch(() => {
+        registerForm.username = ''
+        registerForm.nickname = ''
+        registerForm.email = ''
+        registerForm.code = ''
+        registerForm.password = ''
+        registerForm.confirmPassword = ''
+      })
     }
   })
 }

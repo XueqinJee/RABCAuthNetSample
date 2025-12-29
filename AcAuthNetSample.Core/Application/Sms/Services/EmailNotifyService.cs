@@ -1,5 +1,7 @@
 ﻿using AcAuthNetSample.Core.Application.Configuration.Options;
+using AcAuthNetSample.Core.Application.Sms.Dtos;
 using AcAuthNetSample.Core.Application.Sms.Interfaces;
+using AcAuthNetSample.Core.Comments.Services;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -11,32 +13,41 @@ namespace AcAuthNetSample.Core.Application.Sms.Services {
     public class EmailNotifyService : IEmailNotifyService {
 
         private readonly IOptionsSnapshot<EmailSettingOptions> _emailSettingSnapshot;
-        private readonly IMemoryCache _memoryCache;
+        private readonly DistributeHelperService _distributeHelperService;
         private readonly ILogger<EmailNotifyService> _logger;
 
-        public EmailNotifyService(IMemoryCache memoryCache, 
-            IOptionsSnapshot<EmailSettingOptions> emailSettingSnapshot, 
-            ILogger<EmailNotifyService> logger)
+        public EmailNotifyService(
+            IOptionsSnapshot<EmailSettingOptions> emailSettingSnapshot,
+            ILogger<EmailNotifyService> logger,
+            DistributeHelperService distributeHelperService)
         {
-            _memoryCache = memoryCache;
             _emailSettingSnapshot = emailSettingSnapshot;
             _logger = logger;
+            _distributeHelperService = distributeHelperService;
         }
 
         public async Task<bool> SendCodeToEmailAsync(string email)
         {
             var config = _emailSettingSnapshot.Value;
-            try
-            {
-                var code = GenerateNumericCode();
 
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress(config.SenderName, config.SmtpUser));
-                message.To.Add(new MailboxAddress("" ,email));
-                message.Subject = $"【{config.SenderName}】验证码通知";
-                message.Body = new TextPart("html")
+            // 验证是否已发送验证码
+            var emailCode = _distributeHelperService.Get<EmailCodeDto>(email);
+            if (emailCode != null)
+            {
+                if (emailCode.CreateOn.AddMinutes(1) > DateTime.UtcNow)
                 {
-                    Text = $@"
+                    throw new Exception("邮箱已发送，请稍后重试");
+                }
+            }
+
+            var code = GenerateNumericCode();
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(config.SenderName, config.SmtpUser));
+            message.To.Add(new MailboxAddress("", email));
+            message.Subject = $"【{config.SenderName}】验证码通知";
+            message.Body = new TextPart("html")
+            {
+                Text = $@"
                         <!DOCTYPE html>
                         <html>
                         <head><meta charset='UTF-8'></head>
@@ -50,18 +61,22 @@ namespace AcAuthNetSample.Core.Application.Sms.Services {
                             </div>
                         </body>
                         </html>"
-                };
-                using var client = new SmtpClient();
-                client.Connect(config.SmtpServer, config.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-                client.Authenticate(config.SmtpUser, config.SmtpPassword);
-                await client.SendAsync(message);
-                client.Disconnect(true);
-                return true;
-            }
-            catch (Exception ex) {
-                _logger.LogError($"发送验证码邮件失败：{ex.Message}");
-                return false;
-            }
+            };
+            using var client = new SmtpClient();
+            client.Connect(config.SmtpServer, config.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+            client.Authenticate(config.SmtpUser, config.SmtpPassword);
+            await client.SendAsync(message);
+            client.Disconnect(true);
+
+            // 放入缓存
+            _distributeHelperService.Set(email, new EmailCodeDto
+            {
+                Code = code,
+                Key = email,
+                CreateOn = DateTime.UtcNow,
+                ExpiresIn = 60 * 5
+            }, TimeSpan.FromMinutes(5));
+            return true;
         }
 
 
@@ -73,28 +88,6 @@ namespace AcAuthNetSample.Core.Application.Sms.Services {
 
             var random = RandomNumberGenerator.GetInt32(0, (int)Math.Pow(10, length));
             return random.ToString().PadLeft(length, '0');
-        }
-
-        // 验证验证码（含有效期）
-        public bool ValidateCode(string storedCode, string inputCode, int expireMinutes)
-        {
-            if (string.IsNullOrWhiteSpace(storedCode) || string.IsNullOrWhiteSpace(inputCode))
-                return false;
-
-            var parts = storedCode.Split('|');
-            if (parts.Length != 2 || !long.TryParse(parts[1], out var timestamp))
-                return false;
-
-            var generateTime = DateTimeOffset.FromUnixTimeSeconds(timestamp).LocalDateTime;
-            return parts[0].Equals(inputCode, StringComparison.Ordinal)
-                   && DateTime.Now <= generateTime.AddMinutes(expireMinutes);
-        }
-
-        // 封装验证码+时间戳
-        public string EncodeCode(string code)
-        {
-            var timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            return $"{code}|{timestamp}";
         }
     }
 }

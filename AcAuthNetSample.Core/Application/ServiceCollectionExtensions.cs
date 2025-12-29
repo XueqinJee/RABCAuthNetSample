@@ -1,5 +1,6 @@
 ﻿using AcAuthNetSample.Core.Application.Auth;
 using AcAuthNetSample.Core.Application.Sms;
+using AcAuthNetSample.Core.Comments.Services;
 using AcAuthNetSample.Core.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace AcAuthNetSample.Core.Application {
             });
 
             services.AddMemoryCache();
+            services.AddScoped<DistributeHelperService>();
 
             return services;
         }

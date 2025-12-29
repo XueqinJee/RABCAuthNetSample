@@ -14,6 +14,9 @@ namespace AcAuthNetSample.Core.Comments {
         /// 统一JSON返回结构
         /// </summary>
         private class ApiResponse<T> {
+
+            public bool IsOk { get; set; } = true;
+
             /// <summary>
             /// 业务状态码（200=成功，其他=异常）
             /// </summary>
@@ -66,10 +69,11 @@ namespace AcAuthNetSample.Core.Comments {
         /// <param name="data">数据</param>
         /// <param name="statusCode">HTTP状态码</param>
         /// <returns>JsonResult</returns>
-        private static IActionResult BuildResult<T>(int code, string msg, T data, int statusCode = 200)
+        private static IActionResult BuildResult<T>(bool isOk ,int code, string msg, T data, int statusCode = 200)
         {
             var response = new ApiResponse<T>
             {
+                IsOk = isOk,
                 Code = code,
                 Msg = msg,
                 Data = data,
@@ -95,7 +99,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult Success<T>(T data, string msg = "操作成功")
         {
-            return BuildResult(200, msg, data, 200);
+            return BuildResult(true ,200, msg, data, 200);
         }
 
         /// <summary>
@@ -105,7 +109,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult Success(string msg = "操作成功")
         {
-            return BuildResult(200, msg, string.Empty, 200);
+            return BuildResult(true, 200, msg, string.Empty, 200);
         }
 
         /// <summary>
@@ -116,7 +120,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult Warning(string msg = "操作提醒", object data = null)
         {
-            return BuildResult(201, msg, data ?? string.Empty, 200);
+            return BuildResult(true, 201, msg, data ?? string.Empty, 200);
         }
 
         /// <summary>
@@ -126,7 +130,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult Unauthorized(string msg = "未登录或登录已过期")
         {
-            return BuildResult(401, msg, string.Empty, 401);
+            return BuildResult(false, 401, msg, string.Empty, 401);
         }
 
         /// <summary>
@@ -136,7 +140,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult Forbidden(string msg = "无权限访问该资源")
         {
-            return BuildResult(403, msg, string.Empty, 403);
+            return BuildResult(false, 403, msg, string.Empty, 403);
         }
 
         /// <summary>
@@ -147,7 +151,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult ParamError(string msg = "参数格式错误", object data = null)
         {
-            return BuildResult(400, msg, data ?? string.Empty, 400);
+            return BuildResult(false, 400, msg, data ?? string.Empty, 400);
         }
 
         /// <summary>
@@ -157,7 +161,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult NotFound(string msg = "请求的资源不存在")
         {
-            return BuildResult(404, msg, string.Empty, 404);
+            return BuildResult(false, 404, msg, string.Empty, 404);
         }
 
         /// <summary>
@@ -168,7 +172,7 @@ namespace AcAuthNetSample.Core.Comments {
         /// <returns>JsonResult</returns>
         public static IActionResult ServerError(string msg = "服务器内部错误", object data = null)
         {
-            return BuildResult(500, msg, data ?? string.Empty, 500);
+            return BuildResult(false, 500, msg, data ?? string.Empty, 500);
         }
         #endregion
     }

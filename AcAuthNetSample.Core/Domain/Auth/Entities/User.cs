@@ -10,6 +10,12 @@ using System.Text;
 namespace AcAuthNetSample.Core.Domain.Auth.Entities {
     [Table("user")]
     public class User : BaseEntity {
+
+        [Required]
+        [Column(TypeName = "varchar(32)")]
+        [Comment("昵称")]
+        public string? NickName { get; set; }
+
         [Required]
         [Column(TypeName = "varchar(32)")]
         [Comment("用户名")]

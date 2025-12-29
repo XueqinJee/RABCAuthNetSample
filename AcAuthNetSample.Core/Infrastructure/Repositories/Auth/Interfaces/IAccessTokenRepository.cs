@@ -10,6 +10,6 @@ namespace AcAuthNetSample.Core.Infrastructure.Repositories.Auth.Interfaces {
         Task<TokenAccess?> GetByUserIdAndClientAsync(int userId, string client);
         Task RevokeTokenAsync(string refreshToken);
         Task RevokeAllUserTokensAsync(int userId);
-        Task<TokenAccess> CreateTokenAsync(TokenAccess tokenAccess);
+        Task<TokenAccess> CreateOrUpdateTokenAsync(TokenAccess tokenAccess);
     }
 }

@@ -12,18 +12,19 @@ namespace AcAuthNetSample.Core.Infrastructure.Repositories.Auth {
             _context = context;
         }
 
-        public async Task<TokenAccess> CreateTokenAsync(TokenAccess tokenAccess)
+        public async Task<TokenAccess> CreateOrUpdateTokenAsync(TokenAccess tokenAccess)
         {
             // 查询Token是否存在，若存在更新，反之创建
             var token = _context.AccessTokens.FirstOrDefault(x => x.UserId == tokenAccess.UserId 
-                                                                    && x.Client == tokenAccess.Client
-                                                                    && x.UserAgent == tokenAccess.UserAgent
-                                                                    && x.Ip == tokenAccess.Ip);
+                                                                    && x.Client == tokenAccess.Client);
 
             if(token != null)
             {
                 token.Token = tokenAccess.Token;
                 token.RefreshToken = tokenAccess.RefreshToken;
+                token.FailCount = tokenAccess.FailCount;
+                token.ExpireTime = tokenAccess.ExpireTime;
+
                 _context.AccessTokens.Update(token);
             }
             else
@@ -45,7 +46,7 @@ namespace AcAuthNetSample.Core.Infrastructure.Repositories.Auth {
         public async Task<TokenAccess?> GetByUserIdAndClientAsync(int userId, string client)
         {
             return await _context.AccessTokens
-                            .FirstOrDefaultAsync(x => x.UserId == userId && x.Client == client && x.ExpireTime > DateTime.UtcNow);
+                            .FirstOrDefaultAsync(x => x.UserId == userId && x.Client == client);
         }
 
         public async Task RevokeAllUserTokensAsync(int userId)

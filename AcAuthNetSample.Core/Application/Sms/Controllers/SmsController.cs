@@ -1,4 +1,5 @@
-﻿using AcAuthNetSample.Core.Application.Sms.Interfaces;
+﻿using AcAuthNetSample.Core.Application.Sms.Dtos;
+using AcAuthNetSample.Core.Application.Sms.Interfaces;
 using AcAuthNetSample.Core.Comments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,14 +24,14 @@ namespace AcAuthNetSample.Core.Application.Sms.Controllers {
         }
 
         [HttpPost("sendcode")]
-        public async Task<IActionResult> SendCode()
+        public async Task<IActionResult> SendCode([FromBody]SendCodeRequest reqest)
         {
-            var result = await _emailNotifyService.SendCodeToEmailAsync("2107885241@qq.com");
+            var result = await _emailNotifyService.SendCodeToEmailAsync(reqest.Email!);
             if (result)
             {
                 return JsonResultHelper.Success("邮箱发送成功！");
             }
-            return JsonResultHelper.Warning("发送失败");
+            return JsonResultHelper.ParamError("发送失败");
         }
     }
 }

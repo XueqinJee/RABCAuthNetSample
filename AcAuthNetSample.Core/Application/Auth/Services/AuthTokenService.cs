@@ -79,14 +79,16 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
                 ExpireTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
                 FailCount = 0
             };
-            await _accessTokenRepository.CreateTokenAsync(tokenAccess);
+            await _accessTokenRepository.CreateOrUpdateTokenAsync(tokenAccess);
 
             return new LoginUserResponse
             {
                 Token = token,
                 RefreshToken = refreshToken,
                 ExpireTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
-                userName = userName
+                userName = userName,
+                NickName = user.NickName,
+                Avatar = user.Avator
             };
         }
 

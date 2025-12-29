@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AcAuthNetSample.Core.Domain.Auth.Interfaces {
     public interface IUserRegistractionService {
-        Task<User> RegisterAsync(string userName, string email, string password);
+        Task<User> RegisterAsync(string nickName ,string userName, string email, string password);
 
         Task<bool> IsEmailExistsAsync(string email);
 

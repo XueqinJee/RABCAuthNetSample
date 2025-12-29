@@ -40,7 +40,14 @@ service.interceptors.response.use(
     },
     error => {
         console.error("Response Error:", error)
-        ElMessage.error(error.message || 'Network error')
+        const data = error.response.data
+        console.log(data);
+        
+        if (data.message || data.msg) {
+            ElMessage.error(data.message || data.msg)
+        } else {
+            ElMessage.error(error.message || error.msg || 'Network error')
+        }
         return Promise.reject(error)
     }
 )

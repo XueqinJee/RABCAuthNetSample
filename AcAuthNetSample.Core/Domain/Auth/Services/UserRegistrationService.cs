@@ -24,7 +24,7 @@ namespace AcAuthNetSample.Core.Domain.Auth.Services {
             return await _userRepository.IsUserNameExistsAsync(uerName);
         }
 
-        public async Task<User> RegisterAsync(string userName, string email, string password)
+        public async Task<User> RegisterAsync(string nickName, string userName, string email, string password)
         {
             if(await _userRepository.IsUserNameExistsAsync(userName))
             {
@@ -35,7 +35,8 @@ namespace AcAuthNetSample.Core.Domain.Auth.Services {
                 throw new ArgumentNullException("邮箱已被注册");
 
             var user = User.Create(userName, email);
-            
+            user.NickName = nickName;
+
             var (salt, hasPwd) = _passwordHasher.HashPassword(password);
             user.SetPassword(salt, hasPwd);
 

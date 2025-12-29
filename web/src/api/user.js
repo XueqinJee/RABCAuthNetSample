@@ -10,7 +10,7 @@ const userApi = {
 
     async sendCode(email){
         return await service.post('/sms/sendcode', { email: email})
-    }
+    },
 }
 
 export { userApi }
