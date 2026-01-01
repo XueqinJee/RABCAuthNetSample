@@ -40,10 +40,10 @@ namespace AcAuthNetSample.Core.Domain.Auth.Entities {
         public int FailCount { get; set; } = 0;
 
         [Comment("登录时间")]
-        public DateTime LoginOn { get; set; }
+        public DateTimeOffset LoginOn { get; set; }
 
         [Comment("登录过期时间")]
-        public DateTime ExpireTime { get; set; }
+        public DateTimeOffset ExpireTime { get; set; }
 
         public User? User { get; set; }
     }

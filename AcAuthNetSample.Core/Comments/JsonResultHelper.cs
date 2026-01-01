@@ -35,7 +35,7 @@ namespace AcAuthNetSample.Core.Comments {
             /// <summary>
             /// 时间戳（UTC+8）
             /// </summary>
-            public DateTime Timestamp { get; set; } = DateTime.Now;
+            public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
         }
         #endregion
 
@@ -81,7 +81,7 @@ namespace AcAuthNetSample.Core.Comments {
             };
 
             // .NET Core Web API
-            var jsonResult = new JsonResult(response, GetJsonSettings() as JsonSerializerOptions)
+            var jsonResult = new JsonResult(response)
             {
                 StatusCode = statusCode
             };

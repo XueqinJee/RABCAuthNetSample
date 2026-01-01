@@ -82,6 +82,7 @@
 import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores'
 
 import { userApi } from '@/api'
 
@@ -111,9 +112,11 @@ const handleLogin = async () => {
     try {
       loginLoading.value = true
       // 登录
-      var loginResult = await userApi.login(loginForm.username, loginForm.password)
-
-      ElMessage.success("登录成功")
+      const userStore = useUserStore()
+      var login = await userStore.loginUserAsync(loginForm.username, loginForm.password)
+      if(login){
+        router.push('main')
+      }
     }
     finally {
       loginLoading.value = false

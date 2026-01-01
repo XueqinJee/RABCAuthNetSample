@@ -1,5 +1,5 @@
 using AcAuthNetSample.Core.Application;
-using Microsoft.AspNetCore.Mvc.Filters;
+using RbacNetSample.Web.Configuration.Converters;
 using RbacNetSample.Web.Configuration.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers(options => {
     options.Filters.Add<ApiExceptionFilter>();
-});
+})
+    .AddJsonOptions(options => {
+        options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
 builder.Services.AddStackExchangeRedisCache(options => {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");

@@ -9,6 +9,8 @@ import PermissionView from '../views/main/settings/PermissionView.vue'
 import SettingsView from '../views/main/settings/SettingsView.vue'
 import MenuView from '../views/main/settings/Menu/index.vue'
 
+import { useUserStore } from '@/stores'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -35,7 +37,7 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: DashboardView,
-          meta: { menu: 'dashboard' }
+          meta: { menu: 'dashboard', requiresAuth: true }
         },
         {
           path: 'user',
@@ -46,7 +48,7 @@ const router = createRouter({
         {
           path: 'role',
           name: 'role',
-          component: RoleView,
+          component: () => import('@/views/main/home/test.vue'),
           meta: { menu: 'role' }
         },
         {
@@ -70,6 +72,22 @@ const router = createRouter({
       ]
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+
+  if (to.meta.requiresAuth !== true) {
+    next()
+    return;
+  }
+  console.log(userStore.isLogin);
+  
+  if (userStore.isLogin) {
+    next()
+  } else {
+    next('/login')
+  }
 })
 
 export default router

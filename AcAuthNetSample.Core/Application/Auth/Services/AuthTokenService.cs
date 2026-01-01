@@ -26,6 +26,9 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
         private readonly ILogger<AuthService> _logger;
         private readonly JwtBearerOptions _jwtBearerOptions;
         private readonly JwtConfigOptions _jwtConfigOptions;
+
+        private readonly TimeSpan _expiresIn = TimeSpan.FromMinutes(200);
+
         public AuthTokenService(
             ILogger<AuthService> logger,
             IOptionsSnapshot<JwtBearerOptions> jwtBearerOptions,
@@ -75,8 +78,8 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
                 Ip = ip,
                 Token = token,
                 RefreshToken = refreshToken,
-                LoginOn = DateTime.UtcNow,
-                ExpireTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
+                LoginOn = DateTimeOffset.UtcNow,
+                ExpireTime = DateTimeOffset.UtcNow.Add(_expiresIn),
                 FailCount = 0
             };
             await _accessTokenRepository.CreateOrUpdateTokenAsync(tokenAccess);
@@ -85,7 +88,7 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
             {
                 Token = token,
                 RefreshToken = refreshToken,
-                ExpireTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(20)),
+                ExpireTime = DateTimeOffset.UtcNow.Add(_expiresIn),
                 userName = userName,
                 NickName = user.NickName,
                 Avatar = user.Avator

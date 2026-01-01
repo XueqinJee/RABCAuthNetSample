@@ -85,8 +85,8 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
                                     UserAgent = userAgent,
                                     Client = client,
                                     FailCount = 0,
-                                    ExpireTime = DateTime.UtcNow,
-                                    CreateOn = DateTime.UtcNow,
+                                    ExpireTime = DateTimeOffset.UtcNow,
+                                    CreateOn = DateTimeOffset.UtcNow,
                                 };
 
             bool hasBusinessException = false;
@@ -94,11 +94,10 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
 
             try
             {
-                var currentUtcTime = DateTime.UtcNow;
+                var currentUtcTime = DateTimeOffset.UtcNow;
                 if(loginToken.FailCount > 5 && loginToken.ExpireTime > currentUtcTime)
                 {
-                    var unlockTime = TimeZoneInfo.ConvertTimeFromUtc(loginToken.ExpireTime, _chinaTimeZone);
-                    throw new AccountLockedException($"账户已被锁定，请在 {unlockTime.ToString("yyyy-MM-ddTHH:mm:ss")} 后再次尝试！");
+                    throw new AccountLockedException($"账户已被锁定，请在 {loginToken.ExpireTime.ToString("yyyy-MM-ddTHH:mm:ss")} 后再次尝试！");
                 }
 
                 if (string.IsNullOrEmpty(user.Password) || string.IsNullOrEmpty(user.Salt)) { 

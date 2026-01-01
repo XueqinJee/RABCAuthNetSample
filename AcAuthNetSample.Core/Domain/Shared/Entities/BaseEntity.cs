@@ -13,10 +13,10 @@ namespace AcAuthNetSample.Core.Domain.Shared.Entities {
         public int Id { get; set; }
 
         [Comment("创建时间")]
-        public DateTime CreateOn { get; set; } = DateTime.Now;
+        public DateTimeOffset CreateOn { get; set; } = DateTimeOffset.UtcNow;
 
         [Comment("修改时间")]
-        public DateTime UpdateOn { get; set; }
+        public DateTimeOffset UpdateOn { get; set; }
 
         [Comment("建立人")]
         public int CreatedById { get; set; }
