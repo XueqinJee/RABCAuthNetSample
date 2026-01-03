@@ -25,10 +25,16 @@ export interface FormFieldOption {
         label: string,
         value: string | number
     },
+    // 远程数据字段映射配置
+    remoteFieldMapping?: {
+        label: string,    // 显示文本字段名
+        value: string     // 值字段名
+    },
     defaultValue?: any,
     isRemoteData?: boolean,
     remoteCallFunc?: Function,
-    width?: number
+    width?: number,
+    loading?: boolean
 }
 
 export interface PageinationOption{
@@ -122,7 +128,6 @@ export function useTable(config: UseTableConfig) {
                 const response = await apiFn(requestParams)
                 // 数据格式转换
                 var standardResponse = defaultResponseAdapter(response)
-                debugger
                 // 更新数据状态
                 data.value = standardResponse.records
                 pageination.total = standardResponse.total

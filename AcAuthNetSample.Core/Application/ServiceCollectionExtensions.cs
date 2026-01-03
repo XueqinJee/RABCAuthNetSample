@@ -2,6 +2,7 @@
 using AcAuthNetSample.Core.Application.Sms;
 using AcAuthNetSample.Core.Comments.Services;
 using AcAuthNetSample.Core.Infrastructure.Data;
+using AcAuthNetSample.Core.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,8 @@ namespace AcAuthNetSample.Core.Application {
 
             services.AddMemoryCache();
             services.AddScoped<DistributeHelperService>();
+
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             return services;
         }

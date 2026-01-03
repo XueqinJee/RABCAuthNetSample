@@ -39,7 +39,7 @@ import ResetPasswordDialog from './ResetPasswordDialog.vue'
 
 import ArtTable from '@/components/art-tables/ArtTable.vue'
 import { useTable } from '@/components/art-tables/useTable'
-import { userApi } from '@/api'
+import { userApi, roleApi } from '@/api'
 
 const dialogVisible = ref(false)
 const isEdit = ref(false)
@@ -114,8 +114,8 @@ const {
             { name: 'nickName', label: '昵称', type: 'input' },
             { name: 'userName', label: '用户名', type: 'input' },
             { name: 'email', label: '邮箱', type: 'input' },
-            { name: 'email', label: '角色', type: 'select' },
-            { name: 'email', label: '状态', type: 'select' },
+            { name: 'role', label: '角色', type: 'select', isRemoteData: true, remoteCallFunc: roleApi.getRoleList, remoteFieldMapping: { label: 'roleName', value: 'id' } },
+            { name: 'status', label: '状态', type: 'select' },
         ]
     }
 })

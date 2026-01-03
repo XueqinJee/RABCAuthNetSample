@@ -1,4 +1,4 @@
-﻿using AcAuthNetSample.Core.Application.Auth.Interfaces;
+using AcAuthNetSample.Core.Application.Auth.Interfaces;
 using AcAuthNetSample.Core.Application.Auth.Services;
 using AcAuthNetSample.Core.Application.Configuration.Options;
 using AcAuthNetSample.Core.Domain.Auth.Interfaces;
@@ -29,6 +29,8 @@ namespace AcAuthNetSample.Core.Application.Auth {
 
             services.AddScoped<IUserManagerService, UserManagerService>();
             services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IRoleService, RoleService>();
 
             // Jwt注册
             services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme);
