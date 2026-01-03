@@ -31,5 +31,7 @@ export interface TableConfig {
         page: number,
         pageSize: number
     },
-    data: Array<any>
+    data: Array<any>,
+    apiUrl?: string,
+    method?: 'GET' | 'POST'
 }

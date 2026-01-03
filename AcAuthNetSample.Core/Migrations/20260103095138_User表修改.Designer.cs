@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AcAuthNetSample.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260103043323_用户表新增是否禁用，关联ROLE")]
-    partial class 用户表新增是否禁用关联ROLE
+    [Migration("20260103095138_User表修改")]
+    partial class User表修改
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -423,7 +423,7 @@ namespace AcAuthNetSample.Core.Migrations
                         .HasColumnName("phone")
                         .HasComment("手机号");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int")
                         .HasColumnName("role_id");
 
@@ -489,9 +489,7 @@ namespace AcAuthNetSample.Core.Migrations
                 {
                     b.HasOne("AcAuthNetSample.Core.Domain.Auth.Entities.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });

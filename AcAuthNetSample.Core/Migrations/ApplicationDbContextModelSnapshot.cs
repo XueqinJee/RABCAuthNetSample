@@ -420,7 +420,7 @@ namespace AcAuthNetSample.Core.Migrations
                         .HasColumnName("phone")
                         .HasComment("手机号");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("int")
                         .HasColumnName("role_id");
 
@@ -486,9 +486,7 @@ namespace AcAuthNetSample.Core.Migrations
                 {
                     b.HasOne("AcAuthNetSample.Core.Domain.Auth.Entities.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("Role");
                 });

@@ -1,8 +1,13 @@
 <template>
     <h2>测试</h2>
-    <art-table :config="useTableConfig()">
+    <art-table :colums="columns" :forms="formFields" :data="tableData" :loading="isLoading" :page="pageination"
+        @on-search-handle="loadData"
+        @on-page-size-change-handle="onPageSizeChange" 
+        @on-current-change-handle="onCurrentPageChange">
         <template #action="{ row, index }">
-            <section> {{ row.id }}</section>
+            <el-button size="small" @click="doSearch">编辑</el-button>
+            <el-button size="small">修改密码</el-button>
+            <el-button size="small">删除</el-button>
         </template>
     </art-table>
 </template>
@@ -10,85 +15,37 @@
 <script setup lang="ts">
 import type { TableConfig, TableItemConfig } from '@/config/components/art.table.config'
 import ArtTable from '@/components/art-tables/ArtTable.vue';
+import { useTable } from '@/components/art-tables/useTable';
+import {userApi} from '@/api'
 
-const useTableConfig = (): TableConfig => {
-    return {
-        form: [
-            {
-                name: 'name',
-                label: '标题',
-                type: 'input'
-            },
-            {
-                name: 'nickName',
-                label: '昵称',
-                type: 'input',
-            },
-            {
-                name: 'email',
-                label: '邮箱',
-                type: 'input'
-            },
-            {
-                name: 'state',
-                label: '状态',
-                type: 'select',
-                width: 130,
-                source: [
-                    { id: 1, label: '启动', value: 1 },
-                    { id: 2, label: '准备', value: 2 },
-                    { id: 3, label: '禁用', value: 3 },
-                ],
-                options: {
-                    label: 'label',
-                    value: 'value'
-                }
-            }
+const {
+    isLoading,
+    tableData,
+    onCurrentPageChange,
+    onPageSizeChange,
+    loadData,
+    columns,
+    formFields,
+    pageination
+} = useTable({
+    core: {
+        apiFn: userApi.getUserData,
+        columnsFactory: () => [
+            {prop: 'id',label: '编号', type: 'text', width: 80},
+            {prop: 'nickName',label: '昵称', type: 'text', width: 200},
+            {prop: 'userName',label: '登录名', type: 'text', width: 120},
+            {prop: 'email',label: '邮箱', type: 'text', width: 200},
+            {prop: 'createOn',label: '建立时间', type: 'date', width: 200},
+            {prop: 'action', label: '操作', useSlot: true}
         ],
-        header: [
-            {
-                name: 'id',
-                label: '编号',
-                width: 120,
-                type: 'text'
-            },
-            {
-                name: 'name',
-                label: '名称',
-                width: 100,
-                type: 'text'
-            },
-            {
-                name: 'description',
-                label: '描述',
-                type: 'text'
-            },
-            {
-                name: 'status',
-                label: '状态',
-                type: 'tag',
-                width: 100,
-                status: 'danger'
-            },
-            {
-                name: 'switch',
-                label: 'switch',
-                type: 'switch',
-                width: 120,
-                disabled: true
-            },
-            {
-                name: 'action',
-                label: '操作',
-                type: 'solt',
-                width: 150
-            }
-        ],
-        rowKey: 'id',
-        data: [
-            { id: 1, name: '小米awdfserfgregergergrefeawsdwad', status: '准备',description: '你好' }
+        formFactory: () => [
+            {name: 'nickName', label: '', type: 'input'}
         ]
     }
+})
+
+const doSearch = () => {
+    
 }
 
 </script>

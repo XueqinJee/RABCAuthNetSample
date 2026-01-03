@@ -5,7 +5,7 @@
 namespace AcAuthNetSample.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class 用户表新增是否禁用关联ROLE : Migration
+    public partial class User表修改 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,8 +21,7 @@ namespace AcAuthNetSample.Core.Migrations
                 name: "role_id",
                 table: "user",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_role_id",
@@ -34,8 +33,7 @@ namespace AcAuthNetSample.Core.Migrations
                 table: "user",
                 column: "role_id",
                 principalTable: "role",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "id");
         }
 
         /// <inheritdoc />

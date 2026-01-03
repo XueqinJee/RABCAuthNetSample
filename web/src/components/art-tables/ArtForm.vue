@@ -26,12 +26,11 @@
 </template>
 
 <script setup lang="ts">
-import type { FormItemConfig } from '@/config/components/art.table.config'
-import { ElMessage } from 'element-plus'
+import { FormFieldOption } from './useTable';
 import { ref } from 'vue'
 
 const props = defineProps({
-    config: Array<FormItemConfig>
+    config: Array<FormFieldOption>
 })
 const emits = defineEmits(['onSearch'])
 

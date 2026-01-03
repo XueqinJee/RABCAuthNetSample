@@ -8,9 +8,21 @@ const userApi = {
         return await service.post('/auth/register', data)
     },
 
-    async sendCode(email){
-        return await service.post('/sms/sendcode', { email: email})
+    async sendCode(email) {
+        return await service.post('/sms/sendcode', { email: email })
     },
+
+    async getUserData(params) {
+        return await service.get('/user/pages', { params: params })
+    },
+
+    async addUser(data){
+        return await service.post('/user/add', data)
+    },
+
+    async editUser(data){
+        return await service.post('/user/update', data)
+    }
 }
 
 export { userApi }

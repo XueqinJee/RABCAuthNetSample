@@ -52,6 +52,7 @@ export default {
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { userApi } from '@/api';
 
 const props = defineProps({
   visible: {
@@ -122,8 +123,8 @@ watch(() => props.userData, (newVal) => {
   if (newVal && Object.keys(newVal).length > 0) {
     form.value = {
       id: newVal.id,
-      username: newVal.username,
-      nickname: newVal.nickname,
+      username: newVal.userName,
+      nickname: newVal.nickName,
       email: newVal.email,
       role: newVal.role,
       status: newVal.status,
@@ -148,7 +149,7 @@ const handleDialogClose = () => {
 const handleSubmit = () => {
   formRef.value?.validate((valid) => {
     if (valid) {
-      emit('submit', { ...form.value })
+      emit('submit', props.isEdit,{ ...form.value })
     }
   })
 }

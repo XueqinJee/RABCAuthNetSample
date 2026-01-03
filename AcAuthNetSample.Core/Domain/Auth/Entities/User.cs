@@ -46,7 +46,7 @@ namespace AcAuthNetSample.Core.Domain.Auth.Entities {
         public string? Description { get;  set; }
 
         [ForeignKey(nameof(Role))]
-        public int RoleId { get; set; }
+        public int? RoleId { get; set; }
 
         public bool IsDisabled { get; set; }
 

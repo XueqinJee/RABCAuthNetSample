@@ -42,8 +42,8 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
 
         public async Task<bool> AddUserAsync(UserAddOrUpdateDto user)
         {
-            var usr = User.Create(user.NickName!, user.Email!);
-            user.NickName = usr.NickName;
+            var usr = User.Create(user.UserName!, user.Email!);
+            usr.NickName = user.NickName;
 
             // 密码
             var (salt, password) = _passwordHasher.HashPassword(user.Password!);
@@ -60,7 +60,7 @@ namespace AcAuthNetSample.Core.Application.Auth.Services {
 
         public async Task<bool> UpdateUserAsync(UserAddOrUpdateDto user)
         {
-            var usr = await _userManagerService.GetByIdAsync(user.Id);
+            var usr = await _userManagerService.GetByIdAsync((int)user.Id!);
             if(usr == null)
             {
                 throw new Exception("此用户不存在，修改失败");
