@@ -18,6 +18,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Include="Application\Auth\Dtos\UserMrgSearchPageQuery.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="MailKit" Version="4.14.1" />
 	</ItemGroup>
 

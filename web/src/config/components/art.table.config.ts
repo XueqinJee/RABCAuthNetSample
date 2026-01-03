@@ -10,14 +10,17 @@ export interface FormItemConfig {
     },
     defaultValue?: any,
     isRemoteData?: boolean,
-    remoteCallFunc?: Function
+    remoteCallFunc?: Function,
+    width?: number
 }
 
 export interface TableItemConfig {
     name: string,
     label: string,
-    width: number,
-    type: 'text' | 'checkbox' | 'switch'
+    width?: number,
+    type?: 'text' | 'switch' | 'tag' | 'solt',
+    status?: 'primary' | 'success' | 'info' | 'warning' | 'danger'
+    disabled?: boolean
 }
 
 export interface TableConfig {
@@ -27,5 +30,6 @@ export interface TableConfig {
     pageParam?: {
         page: number,
         pageSize: number
-    }
+    },
+    data: Array<any>
 }

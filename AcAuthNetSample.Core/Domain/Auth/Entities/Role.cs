@@ -64,5 +64,8 @@ namespace AcAuthNetSample.Core.Domain.Auth.Entities {
         [Required(ErrorMessage = "排序号不能为空")]
         [Range(0, int.MaxValue, ErrorMessage = "排序号必须为非负整数")]
         public int Sort { get; set; } = 0; // 默认值0
+
+
+        public List<User>? Users { get; set; }
     }
 }

@@ -31,19 +31,24 @@ namespace AcAuthNetSample.Core.Domain.Auth.Entities {
 
         [Column(TypeName = "varchar(256)")]
         [Comment("头像")]
-        public string? Avator { get; private set; }
+        public string? Avator { get;  set; }
 
         [Column(TypeName = "varchar(32)")]
         [Comment("邮箱")]
-        public string? Email { get; private set; }
+        public string? Email { get;  set; }
 
         [Column(TypeName = "varchar(15)")]
         [Comment("手机号")]
-        public string? Phone { get; private set; }
+        public string? Phone { get;  set; }
 
         [Column(TypeName = "varchar(200)")]
         [Comment("描述")]
-        public string? Description { get; private set; }
+        public string? Description { get;  set; }
+
+        [ForeignKey(nameof(Role))]
+        public int RoleId { get; set; }
+
+        public bool IsDisabled { get; set; }
 
         public User() { }
 
@@ -64,5 +69,7 @@ namespace AcAuthNetSample.Core.Domain.Auth.Entities {
             this.Salt = salt;
             this.Password = password;
         }
+
+        public Role? Role { get; set; }
     }
 }

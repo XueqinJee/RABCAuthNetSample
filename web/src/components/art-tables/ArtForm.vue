@@ -2,32 +2,55 @@
     <el-form :inline="true">
         <template v-for="item in props.config">
             <el-form-item v-if="item.type == 'input'" :label="item.label">
-                <el-input v-model="formData[item.name]" :placeholder="'请输入' + item.label"/>
+                <el-input 
+                    :style="{'width': (item.width || 200) + 'px'}"
+                    v-model="formData[item.name]" 
+                    :placeholder="'请输入' + item.label" 
+                    clearable/>
             </el-form-item>
             <el-form-item v-else-if="item.type == 'select'" :label="item.label">
-                <el-select v-model="formData[item.name]" :placeholder="'请输入' + item.label" style="width: 240px">
+                <el-select 
+                    clearable
+                    v-model="formData[item.name]" 
+                    :placeholder="'请选择' + item.label" 
+                    :style="{'width': (item.width || 120) + 'px'}">
                     <el-option v-for="row in item.source" :key="row[item.options.value]" :label="row[item.options.label]" :value="row[item.options.value]"/>
                 </el-select>
             </el-form-item>
         </template>
         <el-form-item>
-            <el-button type="primary">搜索</el-button>
-            <el-button>重置</el-button>
+            <el-button @click="onSearchHandle" type="primary">搜索</el-button>
+            <el-button @click="resetSearchFormHandle">重置</el-button>
         </el-form-item>
     </el-form>
 </template>
 
 <script setup lang="ts">
 import type { FormItemConfig } from '@/config/components/art.table.config'
+import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 
 const props = defineProps({
     config: Array<FormItemConfig>
 })
+const emits = defineEmits(['onSearch'])
 
 const formData = ref({})
-debugger
+
 props.config.forEach(item => {
     formData.value[item.name] = item.defaultValue ?? ''
 })
+
+const resetSearchFormHandle = () => {
+    var keys = Object.keys(formData.value)
+    keys.forEach(d => {
+        formData.value[d] = ''
+    })
+    onSearchHandle()
+}
+
+const onSearchHandle = () => {
+    emits('onSearch', {...formData.value})
+}
+
 </script>

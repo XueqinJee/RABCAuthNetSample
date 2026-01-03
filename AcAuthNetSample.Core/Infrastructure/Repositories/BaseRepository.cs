@@ -1,9 +1,11 @@
-﻿using AcAuthNetSample.Core.Domain.Shared.Entities;
+﻿using AcAuthNetSample.Core.Comments.Dtos;
+using AcAuthNetSample.Core.Domain.Shared.Entities;
 using AcAuthNetSample.Core.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace AcAuthNetSample.Core.Infrastructure.Repositories {
@@ -15,6 +17,16 @@ namespace AcAuthNetSample.Core.Infrastructure.Repositories {
         {
             _context = context;
             _dbSet = _context.Set<T>();
+        }
+
+        public PageResult<T> GetPage(BasePageQuery query, Expression<Func<T, bool>>? express = null, Expression<Func<T, object>>? orderBy = null, bool isAscending = false)
+        {
+            return _dbSet.ToPageResult(query, express, orderBy, isAscending);
+        }
+
+        public async Task<PageResult<T>> GetPageAsync(BasePageQuery query, Expression<Func<T, bool>>? express = null, Expression<Func<T, object>>? orderBy = null, bool isAscending = false)
+        {
+            return await _dbSet.ToPageResultAsync(query, express, orderBy, isAscending);
         }
 
         public async Task<T> GetByIdAsync(int id)
@@ -75,6 +87,11 @@ namespace AcAuthNetSample.Core.Infrastructure.Repositories {
             var tableName = _context.Model.FindEntityType(typeof(T))!.GetTableName();
             var sql = $"delete from {tableName} where id = @Id";
             return await _context.Database.ExecuteSqlRawAsync(sql, new SqlParameter("@Id", id)) > 0;
+        }
+
+        public IQueryable<T> GetQueryable()
+        {
+            return _dbSet as IQueryable<T>;
         }
     }
 }

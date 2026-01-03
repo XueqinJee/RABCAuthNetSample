@@ -27,6 +27,9 @@ namespace AcAuthNetSample.Core.Application.Auth {
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAccessTokenRepository, AccessTokenRepository>();
 
+            services.AddScoped<IUserManagerService, UserManagerService>();
+            services.AddScoped<IUserService, UserService>();
+
             // Jwt注册
             services.AddAuthentication().AddJwtBearer(JwtBearerDefaults.AuthenticationScheme);
             services.AddOptions<JwtConfigOptions>()
